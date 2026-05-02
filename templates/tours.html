@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Agency - Package Tours</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Travel Agency</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Customers</a>
+                <a class="nav-link active" href="/tours">Package Tours</a>
+                <a class="nav-link" href="/reservations">Reservations</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <h1 class="text-center mb-4">Manage Package Tours</h1>
+        
+        <div class="card shadow-sm mb-5">
+            <div class="card-body">
+                <h2 class="card-title">Add New Tour</h2>
+                <form action="/add_tour" method="POST" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Destination</label>
+                        <input type="text" name="destination" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Base Price</label>
+                        <input type="number" step="0.01" name="price" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="start_date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Max Capacity</label>
+                        <input type="number" name="capacity" class="form-control">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Add Tour</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title">Available Tours</h2>
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Destination</th>
+                            <th>Price</th>
+                            <th>Dates</th>
+                            <th>Capacity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tour in tours %}
+                        <tr>
+                            <td>{{ tour.package_id }}</td>
+                            <td>{{ tour.title }}</td>
+                            <td>{{ tour.destination }}</td>
+                            <td>${{ tour.base_price }}</td>
+                            <td>{{ tour.start_date }} to {{ tour.end_date }}</td>
+                            <td>{{ tour.max_capacity }}</td>
+                            <td>
+                                <a href="/delete_tour/{{ tour.package_id }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this tour?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
