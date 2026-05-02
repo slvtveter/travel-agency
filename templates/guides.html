@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Agency - Guides</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Travel Agency</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Dashboard</a>
+                <a class="nav-link" href="/customers">Customers</a>
+                <a class="nav-link" href="/tours">Package Tours</a>
+                <a class="nav-link" href="/reservations">Reservations</a>
+                <a class="nav-link active" href="/guides">Guides</a>
+                <a class="nav-link" href="/transport">Transport</a>
+                <a class="nav-link" href="/eligibility">Eligibility</a>
+                <a class="nav-link" href="/payments">Payments</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <h1 class="text-center mb-4">Manage Guides</h1>
+        
+        <div class="card shadow-sm mb-5">
+            <div class="card-body">
+                <h2 class="card-title">Add New Guide</h2>
+                <form action="/add_guide" method="POST" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Specialization</label>
+                        <input type="text" name="specialization" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Languages</label>
+                        <input type="text" name="languages" class="form-control" placeholder="e.g. English, French">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Experience (Years)</label>
+                        <input type="number" name="experience" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Rating (0-5)</label>
+                        <input type="number" step="0.1" name="rating" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Available">Available</option>
+                            <option value="On Tour">On Tour</option>
+                            <option value="Vacation">Vacation</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Add Guide</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title">Our Guides</h2>
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Specialization</th>
+                            <th>Languages</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for guide in guides %}
+                        <tr>
+                            <td>{{ guide.guide_id }}</td>
+                            <td>{{ guide.name }}</td>
+                            <td>{{ guide.specialization }}</td>
+                            <td>{{ guide.languages_spoken }}</td>
+                            <td>{{ guide.rating }}/5</td>
+                            <td><span class="badge {% if guide.availability_status == 'Available' %}bg-success{% else %}bg-secondary{% endif %}">{{ guide.availability_status }}</span></td>
+                            <td>
+                                <a href="/edit_guide/{{ guide.guide_id }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="/delete_guide/{{ guide.guide_id }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this guide?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <h2 class="card-title text-center">Edit Guide</h2>
+                <form action="/edit_guide/{{ guide.guide_id }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ guide.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Specialization</label>
+                        <input type="text" name="specialization" class="form-control" value="{{ guide.specialization }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Languages</label>
+                        <input type="text" name="languages" class="form-control" value="{{ guide.languages_spoken }}">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Experience (Years)</label>
+                            <input type="number" name="experience" class="form-control" value="{{ guide.experience_years }}">
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Rating</label>
+                            <input type="number" step="0.1" name="rating" class="form-control" value="{{ guide.rating }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Available" {% if guide.availability_status == 'Available' %}selected{% endif %}>Available</option>
+                            <option value="On Tour" {% if guide.availability_status == 'On Tour' %}selected{% endif %}>On Tour</option>
+                            <option value="Vacation" {% if guide.availability_status == 'Vacation' %}selected{% endif %}>Vacation</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Update Guide</button>
+                    <a href="/guides" class="btn btn-secondary w-100 mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

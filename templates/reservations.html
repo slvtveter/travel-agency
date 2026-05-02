@@ -11,40 +11,71 @@
         <div class="container">
             <a class="navbar-brand" href="/">Travel Agency</a>
             <div class="navbar-nav">
-                <a class="nav-link" href="/">Customers</a>
+                <a class="nav-link" href="/">Dashboard</a>
+                <a class="nav-link" href="/customers">Customers</a>
                 <a class="nav-link" href="/tours">Package Tours</a>
                 <a class="nav-link active" href="/reservations">Reservations</a>
+                <a class="nav-link" href="/guides">Guides</a>
+                <a class="nav-link" href="/transport">Transport</a>
+                <a class="nav-link" href="/eligibility">Eligibility</a>
+                <a class="nav-link" href="/payments">Payments</a>
             </div>
         </div>
     </nav>
 
     <div class="container pb-5">
-        <h1 class="text-center mb-4">Manage Reservations</h1>
+        <h1 class="text-center mb-4">Advanced Reservations</h1>
         
         <div class="card shadow-sm mb-5">
             <div class="card-body">
-                <h2 class="card-title">New Reservation</h2>
+                <h2 class="card-title">New Booking</h2>
                 <form action="/add_reservation" method="POST" class="row g-3">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <label class="form-label">Customer</label>
                         <select name="customer_id" class="form-select" required>
                             <option value="">Select Customer...</option>
                             {% for customer in customers %}
-                            <option value="{{ customer.customer_id }}">{{ customer.name }} ({{ customer.email }})</option>
+                            <option value="{{ customer.customer_id }}">{{ customer.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <label class="form-label">Package Tour</label>
                         <select name="package_id" class="form-select" required>
                             <option value="">Select Tour...</option>
                             {% for tour in tours %}
-                            <option value="{{ tour.package_id }}">{{ tour.title }} - ${{ tour.base_price }}</option>
+                            <option value="{{ tour.package_id }}">{{ tour.title }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100">Book Now</button>
+                    <div class="col-md-6">
+                        <label class="form-label">Assign Guide</label>
+                        <select name="guide_id" class="form-select">
+                            <option value="">Optional: Select Guide...</option>
+                            {% for guide in guides %}
+                            <option value="{{ guide.guide_id }}">{{ guide.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Assign Transport</label>
+                        <select name="vehicle_id" class="form-select">
+                            <option value="">Optional: Select Vehicle...</option>
+                            {% for vehicle in transport %}
+                            <option value="{{ vehicle.vehicle_id }}">{{ vehicle.type }} ({{ vehicle.plate_number }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Number of People</label>
+                        <input type="number" name="people" class="form-control" value="1">
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">Special Requests</label>
+                        <input type="text" name="special_request" class="form-control" placeholder="Dietary needs, accessibility, etc.">
+                    </div>
+                    <div class="col-12 mt-3 text-end">
+                        <button type="submit" class="btn btn-primary px-5">Complete Booking</button>
                     </div>
                 </form>
             </div>
@@ -52,14 +83,16 @@
 
         <div class="card shadow-sm">
             <div class="card-body">
-                <h2 class="card-title">Reservation History</h2>
+                <h2 class="card-title">Booking History</h2>
                 <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
-                            <th>Date</th>
                             <th>Customer</th>
                             <th>Tour</th>
+                            <th>Guide</th>
+                            <th>Transport</th>
+                            <th>People</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -68,10 +101,12 @@
                         {% for res in reservations %}
                         <tr>
                             <td>{{ res.reservation_id }}</td>
-                            <td>{{ res.booking_date }}</td>
                             <td>{{ res.customer_name }}</td>
                             <td>{{ res.tour_title }}</td>
-                            <td><span class="badge bg-success">{{ res.reservation_status or 'Confirmed' }}</span></td>
+                            <td>{{ res.guide_name or 'Not Assigned' }}</td>
+                            <td>{{ res.vehicle_type or 'Not Assigned' }}</td>
+                            <td>{{ res.number_of_people }}</td>
+                            <td><span class="badge bg-success">{{ res.reservation_status }}</span></td>
                             <td>
                                 <a href="/delete_reservation/{{ res.reservation_id }}" class="btn btn-danger btn-sm" onclick="return confirm('Cancel this reservation?')">Cancel</a>
                             </td>
