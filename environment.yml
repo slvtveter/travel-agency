@@ -2,6 +2,8 @@ name: /Users/slvtveter/Desktop/database_project/env
 channels:
   - conda-forge
 dependencies:
-  - flask
   - python=3.12
+  - flask
+  - mysql-connector-python
+  - python-dotenv
 prefix: /Users/slvtveter/Desktop/database_project/env
