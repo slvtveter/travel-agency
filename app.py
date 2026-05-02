@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import mysql.connector
 import os
+from datetime import date
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -142,12 +143,14 @@ def add_tour():
     start_date = request.form.get('start_date')
     end_date = request.form.get('end_date')
     capacity = request.form.get('capacity')
+    tour_type = request.form.get('tour_type')
+    description = request.form.get('description')
 
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO package_tours (title, destination, base_price, start_date, end_date, max_capacity) VALUES (%s, %s, %s, %s, %s, %s)',
-        (title, destination, price, start_date, end_date, capacity)
+        'INSERT INTO package_tours (title, destination, base_price, start_date, end_date, max_capacity, tour_type, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+        (title, destination, price, start_date, end_date, capacity, tour_type, description)
     )
     conn.commit()
     cursor.close()
@@ -171,6 +174,7 @@ def reservations():
     
     query = '''
         SELECT r.reservation_id, r.booking_date, r.reservation_status, r.number_of_people, r.special_request,
+               r.booking_channel, r.assignment_date,
                c.name as customer_name, p.title as tour_title, 
                g.name as guide_name, t.type as vehicle_type, t.plate_number
         FROM reservations r
@@ -208,12 +212,14 @@ def add_reservation():
     vehicle_id = request.form.get('vehicle_id')
     people = request.form.get('people')
     request_text = request.form.get('special_request')
+    channel = request.form.get('booking_channel')
+    assign_date = request.form.get('assignment_date') or date.today()
 
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO reservations (customer_id, package_id, guide_id, vehicle_id, number_of_people, special_request, reservation_status) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-        (customer_id, package_id, guide_id, vehicle_id, people, request_text, 'Confirmed')
+        'INSERT INTO reservations (customer_id, package_id, guide_id, vehicle_id, number_of_people, special_request, booking_channel, assignment_date, reservation_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (customer_id, package_id, guide_id, vehicle_id, people, request_text, channel, assign_date, 'Confirmed')
     )
     conn.commit()
     cursor.close()
@@ -248,12 +254,13 @@ def add_guide():
     exp = request.form.get('experience')
     rating = request.form.get('rating')
     status = request.form.get('status')
+    contact = request.form.get('contact_info')
 
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO guides (name, specialization, languages_spoken, experience_years, rating, availability_status) VALUES (%s, %s, %s, %s, %s, %s)',
-        (name, spec, langs, exp, rating, status)
+        'INSERT INTO guides (name, specialization, languages_spoken, experience_years, rating, availability_status, contact_info) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+        (name, spec, langs, exp, rating, status, contact)
     )
     conn.commit()
     cursor.close()
@@ -272,10 +279,11 @@ def edit_guide(id):
         exp = request.form.get('experience')
         rating = request.form.get('rating')
         status = request.form.get('status')
+        contact = request.form.get('contact_info')
         
         cursor.execute(
-            'UPDATE guides SET name=%s, specialization=%s, languages_spoken=%s, experience_years=%s, rating=%s, availability_status=%s WHERE guide_id=%s',
-            (name, spec, langs, exp, rating, status, id)
+            'UPDATE guides SET name=%s, specialization=%s, languages_spoken=%s, experience_years=%s, rating=%s, availability_status=%s, contact_info=%s WHERE guide_id=%s',
+            (name, spec, langs, exp, rating, status, contact, id)
         )
         conn.commit()
         conn.close()
@@ -447,12 +455,14 @@ def add_payment():
     res_id = request.form.get('reservation_id')
     amount = request.form.get('amount')
     method = request.form.get('method')
+    currency = request.form.get('currency') or 'USD'
+    tx_id = request.form.get('transaction_id')
 
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO payments (reservation_id, amount, payment_method, status) VALUES (%s, %s, %s, %s)',
-        (res_id, amount, method, 'Completed')
+        'INSERT INTO payments (reservation_id, amount, payment_method, currency, transaction_id, status) VALUES (%s, %s, %s, %s, %s, %s)',
+        (res_id, amount, method, currency, tx_id, 'Completed')
     )
     conn.commit()
     cursor.close()
