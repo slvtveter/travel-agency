@@ -87,12 +87,33 @@ CREATE TABLE IF NOT EXISTS packagetour_guide_eligibility (
 );
 
 -- Sample Data
-INSERT INTO customers (name, email, phone_number, loyalty_points) VALUES ('Alice Smith', 'alice@email.com', '555-0101', 150);
-INSERT INTO package_tours (title, destination, base_price) VALUES ('Paris Getaway', 'France', 1200.00);
-INSERT INTO guides (name, specialization) VALUES ('Jean-Pierre', 'History');
-INSERT INTO transport (type, plate_number, driver_name) VALUES ('Minibus', 'ABC-123', 'John Doe');
+INSERT INTO customers (name, email, phone_number, loyalty_points) VALUES 
+('Alice Smith', 'alice@email.com', '555-0101', 150),
+('Bob Johnson', 'bob@example.com', '555-0202', 50),
+('Charlie Brown', 'charlie@travel.com', '555-0303', 300);
 
-select * from customers;
-select * from package_tours;
-select * from guides;
-select * from transport;
+INSERT INTO package_tours (title, destination, base_price, tour_type, max_capacity) VALUES 
+('Paris Getaway', 'France', 1200.00, 'Cultural', 20),
+('Tokyo Adventure', 'Japan', 2500.00, 'Adventure', 15),
+('Swiss Alps Ski', 'Switzerland', 1800.00, 'Sport', 10);
+
+INSERT INTO guides (name, specialization, languages_spoken, availability_status) VALUES 
+('Jean-Pierre', 'History', 'French, English', 'Available'),
+('Yuki Tanaka', 'Modern Art', 'Japanese, English', 'Available'),
+('Hans Müller', 'Hiking', 'German, English, Italian', 'Available');
+
+INSERT INTO transport (type, plate_number, driver_name, capacity) VALUES 
+('Minibus', 'ABC-123', 'John Doe', 12),
+('SUV', 'XYZ-789', 'Jane Roe', 5),
+('Luxury Coach', 'BUS-456', 'Marco Polo', 45);
+
+INSERT INTO reservations (customer_id, package_id, guide_id, vehicle_id, number_of_people, reservation_status, booking_channel) VALUES
+(1, 1, 1, 1, 2, 'Confirmed', 'Website'),
+(2, 2, 2, 2, 1, 'Confirmed', 'Mobile App');
+
+INSERT INTO payments (reservation_id, amount, payment_method, transaction_id, status) VALUES
+(1, 1200.00, 'Credit Card', 'TXN-001', 'Completed'),
+(2, 2500.00, 'PayPal', 'TXN-002', 'Completed');
+
+INSERT INTO packagetour_guide_eligibility (package_id, guide_id) VALUES 
+(1, 1), (2, 2), (3, 3);

@@ -1,7 +1,5 @@
--- Travel Agency System Schema
--- Based on ER Diagram
+-- Travel Agency System Schema (SQLite Version for local testing)
 
--- 1. Customers Table
 CREATE TABLE IF NOT EXISTS customers (
     customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -10,7 +8,6 @@ CREATE TABLE IF NOT EXISTS customers (
     loyalty_points INTEGER DEFAULT 0
 );
 
--- 2. Package Tours Table
 CREATE TABLE IF NOT EXISTS package_tours (
     package_id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -23,7 +20,6 @@ CREATE TABLE IF NOT EXISTS package_tours (
     description TEXT
 );
 
--- 3. Guides Table
 CREATE TABLE IF NOT EXISTS guides (
     guide_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -35,7 +31,6 @@ CREATE TABLE IF NOT EXISTS guides (
     specialization TEXT
 );
 
--- 4. Transport Table
 CREATE TABLE IF NOT EXISTS transport (
     vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT,
     type TEXT NOT NULL,
@@ -45,7 +40,6 @@ CREATE TABLE IF NOT EXISTS transport (
     route_info TEXT
 );
 
--- 5. Reservations Table
 CREATE TABLE IF NOT EXISTS reservations (
     reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
     booking_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -65,7 +59,6 @@ CREATE TABLE IF NOT EXISTS reservations (
     FOREIGN KEY (vehicle_id) REFERENCES transport(vehicle_id)
 );
 
--- 6. Payments Table
 CREATE TABLE IF NOT EXISTS payments (
     payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     reservation_id INTEGER,
@@ -78,7 +71,6 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
 );
 
--- 7. Many-to-Many Relationship: PackageTour eligible for Guide
 CREATE TABLE IF NOT EXISTS packagetour_guide_eligibility (
     package_id INTEGER,
     guide_id INTEGER,
@@ -87,8 +79,19 @@ CREATE TABLE IF NOT EXISTS packagetour_guide_eligibility (
     FOREIGN KEY (guide_id) REFERENCES guides(guide_id)
 );
 
--- Sample Data for testing
-INSERT INTO customers (name, email, phone_number, loyalty_points) VALUES ('Alice Smith', 'alice@email.com', '555-0101', 150);
-INSERT INTO package_tours (title, destination, base_price) VALUES ('Paris Getaway', 'France', 1200.00);
-INSERT INTO guides (name, specialization) VALUES ('Jean-Pierre', 'History');
-INSERT INTO transport (type, plate_number, driver_name) VALUES ('Minibus', 'ABC-123', 'John Doe');
+-- Sample Data
+INSERT INTO customers (name, email, phone_number, loyalty_points) VALUES 
+('Alice Smith', 'alice@email.com', '555-0101', 150),
+('Bob Johnson', 'bob@example.com', '555-0202', 50);
+
+INSERT INTO package_tours (title, destination, base_price, tour_type) VALUES 
+('Paris Getaway', 'France', 1200.00, 'Cultural'),
+('Tokyo Adventure', 'Japan', 2500.00, 'Adventure');
+
+INSERT INTO guides (name, specialization, languages_spoken) VALUES 
+('Jean-Pierre', 'History', 'French, English'),
+('Yuki Tanaka', 'Modern Art', 'Japanese, English');
+
+INSERT INTO transport (type, plate_number, driver_name, capacity) VALUES 
+('Minibus', 'ABC-123', 'John Doe', 12),
+('SUV', 'XYZ-789', 'Jane Roe', 5);
