@@ -117,3 +117,7 @@ INSERT INTO payments (reservation_id, amount, payment_method, transaction_id, st
 
 INSERT INTO packagetour_guide_eligibility (package_id, guide_id) VALUES 
 (1, 1), (2, 2), (3, 3);
+
+ USE travel_agency;
+ -- This will delete the old tables and recreate them with the new columns
+ SOURCE mysql_schema.sql;

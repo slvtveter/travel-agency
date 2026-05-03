@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Tour</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card shadow-sm mx-auto" style="max-width: 700px;">
+            <div class="card-body">
+                <h2 class="card-title text-center">Edit Package Tour</h2>
+                <form action="/edit_tour/{{ tour.package_id }}" method="POST" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-control" value="{{ tour.title }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Destination</label>
+                        <input type="text" name="destination" class="form-control" value="{{ tour.destination }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tour Type</label>
+                        <input type="text" name="tour_type" class="form-control" value="{{ tour.tour_type }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Base Price</label>
+                        <input type="number" step="0.01" name="price" class="form-control" value="{{ tour.base_price }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ tour.start_date }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ tour.end_date }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Max Capacity</label>
+                        <input type="number" name="capacity" class="form-control" value="{{ tour.max_capacity }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3">{{ tour.description }}</textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-success w-100">Update Tour</button>
+                        <a href="/tours" class="btn btn-secondary w-100 mt-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

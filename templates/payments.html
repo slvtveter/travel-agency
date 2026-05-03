@@ -89,6 +89,7 @@
                                 <th>Currency</th>
                                 <th>Method</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,7 +102,11 @@
                                 <td><strong>${{ pay.amount }}</strong></td>
                                 <td>{{ pay.currency }}</td>
                                 <td>{{ pay.payment_method }}</td>
-                                <td><span class="badge bg-success">Completed</span></td>
+                                <td><span class="badge bg-success">{{ pay.status }}</span></td>
+                                <td>
+                                    <a href="/edit_payment/{{ pay.payment_id }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="/delete_payment/{{ pay.payment_id }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this payment?')">Delete</a>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
