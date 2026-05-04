@@ -20,17 +20,18 @@ def get_db_connection():
     for attempt in range(1, DB_CONNECT_RETRIES + 1):
         try:
             return mysql.connector.connect(
-                host=os.getenv("DB_HOST", "localhost"),
-                user=os.getenv("DB_USER", "root"),
+                host=os.getenv("DB_HOST"),
+                port=int(os.getenv("DB_PORT", "3306")),
+                user=os.getenv("DB_USER"),
                 password=os.getenv("DB_PASSWORD"),
-                database=os.getenv("DB_NAME", "travel_agency"),
+                database=os.getenv("DB_NAME"),
                 connection_timeout=DB_CONNECT_TIMEOUT,
             )
         except MySQLError as err:
             last_error = err
             if attempt < DB_CONNECT_RETRIES:
                 time.sleep(DB_RETRY_DELAY)
-    raise ConnectionError("Could not connect to the local MySQL database.") from last_error
+    raise ConnectionError("Could not connect to MySQL database.") from last_error
 
 
 @contextmanager
