@@ -452,7 +452,8 @@ def add_payment():
     method = request.form.get('method')
     currency = request.form.get('currency') or DEFAULT_CURRENCY
     tx_id = request.form.get('transaction_id')
-    execute_write('INSERT INTO payments (reservation_id, amount, payment_method, currency, payment_date, transaction_id, status) VALUES (%s, %s, %s, %s, %s, %s, %s)', (res_id, amount, method, currency, date.today(), tx_id, 'Completed'))
+    status = request.form.get('status') or 'Pending'
+    execute_write('INSERT INTO payments (reservation_id, amount, payment_method, currency, payment_date, transaction_id, status) VALUES (%s, %s, %s, %s, %s, %s, %s)', (res_id, amount, method, currency, date.today(), tx_id, status))
     return redirect('/payments')
 
 @app.route('/edit_payment/<int:id>', methods=['GET', 'POST'])
