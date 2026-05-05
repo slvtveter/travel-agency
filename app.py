@@ -1,15 +1,17 @@
 from contextlib import contextmanager
-from flask import Flask, abort, render_template, request, redirect
+from flask import Flask, abort, flash, render_template, request, redirect
 import mysql.connector
 import os
 import time
 from datetime import date
 from dotenv import load_dotenv
 from mysql.connector import Error as MySQLError, IntegrityError
+from werkzeug.exceptions import BadRequest
 
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key")
 
 DB_CONNECT_RETRIES = int(os.getenv("DB_CONNECT_RETRIES", "3"))
 DB_CONNECT_TIMEOUT = int(os.getenv("DB_CONNECT_TIMEOUT", "5"))
@@ -73,6 +75,32 @@ def execute_write(query, params=()):
         cursor.execute(query, params)
 
 
+def flash_and_return(message, category='danger', status_code=400):
+    if request.referrer:
+        flash(message, category)
+        return redirect(request.referrer)
+    return message, status_code
+
+
+def mysql_error_message(err):
+    message = str(err)
+    if getattr(err, 'errno', None) == 1062:
+        return "A record with this unique value already exists."
+    if getattr(err, 'errno', None) == 1406:
+        return "One of the submitted values is too long."
+    if getattr(err, 'errno', None) == 1048:
+        return "A required field is missing."
+    if getattr(err, 'errno', None) == 1364:
+        return "A required field has no value."
+    if getattr(err, 'errno', None) == 1451:
+        return "This record cannot be deleted because other records still use it."
+    if getattr(err, 'errno', None) == 1452:
+        return "One of the selected related records does not exist."
+    if getattr(err, 'errno', None) == 3819 or "check constraint" in message.lower():
+        return "The submitted data does not satisfy the database rules."
+    return "The submitted data could not be saved. Please check the form values."
+
+
 def parse_positive_int(value, field_name):
     try:
         parsed = int(value)
@@ -101,10 +129,21 @@ def handle_connection_error(err):
     return "Database temporarily unavailable. Please check the local MySQL connection.", 503
 
 
+@app.errorhandler(BadRequest)
+def handle_bad_request(err):
+    return flash_and_return(err.description or "Please check the submitted form values.", status_code=400)
+
+
 @app.errorhandler(IntegrityError)
 def handle_integrity_error(err):
     app.logger.warning("Database constraint error: %s", err)
-    return "The submitted data conflicts with an existing record.", 409
+    return flash_and_return(mysql_error_message(err), status_code=409)
+
+
+@app.errorhandler(MySQLError)
+def handle_mysql_error(err):
+    app.logger.warning("Database error: %s", err)
+    return flash_and_return(mysql_error_message(err), status_code=400)
 
 @app.route('/')
 def dashboard():
