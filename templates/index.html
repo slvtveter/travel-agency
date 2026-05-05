@@ -29,14 +29,17 @@
             <div class="card-body">
                 <h2 class="card-title">Add New Customer</h2>
                 <form action="/add_customer" method="POST" class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <input type="text" name="name" class="form-control" placeholder="Full Name" required>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <input type="email" name="email" class="form-control" placeholder="Email" required>
                     </div>
                     <div class="col-md-3">
                         <input type="text" name="phone" class="form-control" placeholder="Phone Number">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="loyalty_points" class="form-control" placeholder="Points" value="0" min="0">
                     </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-primary w-100">Add</button>

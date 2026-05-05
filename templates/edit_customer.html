@@ -24,6 +24,10 @@
                         <label class="form-label">Phone</label>
                         <input type="text" name="phone" class="form-control" value="{{ customer.phone_number }}">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Loyalty Points</label>
+                        <input type="number" name="loyalty_points" class="form-control" value="{{ customer.loyalty_points }}" min="0">
+                    </div>
                     <button type="submit" class="btn btn-success w-100">Update Customer</button>
                     <a href="/" class="btn btn-secondary w-100 mt-2">Cancel</a>
                 </form>

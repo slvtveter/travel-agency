@@ -158,7 +158,8 @@ def add_customer():
     name = request.form.get('name')
     email = request.form.get('email')
     phone = request.form.get('phone')
-    execute_write('INSERT INTO customers (name, email, phone_number) VALUES (%s, %s, %s)', (name, email, phone))
+    loyalty_points = request.form.get('loyalty_points') or 0
+    execute_write('INSERT INTO customers (name, email, phone_number, loyalty_points) VALUES (%s, %s, %s, %s)', (name, email, phone, loyalty_points))
     return redirect('/customers')
 
 @app.route('/edit_customer/<int:id>', methods=['GET', 'POST'])
@@ -167,7 +168,8 @@ def edit_customer(id):
         name = request.form.get('name')
         email = request.form.get('email')
         phone = request.form.get('phone')
-        execute_write('UPDATE customers SET name=%s, email=%s, phone_number=%s WHERE customer_id=%s', (name, email, phone, id))
+        loyalty_points = request.form.get('loyalty_points') or 0
+        execute_write('UPDATE customers SET name=%s, email=%s, phone_number=%s, loyalty_points=%s WHERE customer_id=%s', (name, email, phone, loyalty_points, id))
         return redirect('/customers')
     customer = fetch_one('SELECT * FROM customers WHERE customer_id = %s', (id,))
     return render_template('edit_customer.html', customer=customer)
@@ -320,10 +322,11 @@ def add_reservation():
     people = parse_positive_int(request.form.get('people'), "People")
     request_text = request.form.get('special_request')
     channel = request.form.get('booking_channel')
+    status = request.form.get('status') or 'Pending'
     assign_date = request.form.get('assignment_date') or date.today()
     booking_date = date.today()
     total_price = calculate_reservation_total(package_id, people)
-    execute_write('INSERT INTO reservations (booking_date, customer_id, package_id, guide_id, vehicle_id, number_of_people, total_price, special_request, booking_channel, assignment_date, reservation_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (booking_date, customer_id, package_id, guide_id, vehicle_id, people, total_price, request_text, channel, assign_date, 'Confirmed'))
+    execute_write('INSERT INTO reservations (booking_date, customer_id, package_id, guide_id, vehicle_id, number_of_people, total_price, special_request, booking_channel, assignment_date, reservation_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (booking_date, customer_id, package_id, guide_id, vehicle_id, people, total_price, request_text, channel, assign_date, status))
     return redirect('/reservations')
 
 @app.route('/edit_reservation/<int:id>', methods=['GET', 'POST'])

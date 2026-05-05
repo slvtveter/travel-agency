@@ -80,6 +80,7 @@
                             <th>Spec</th>
                             <th>Contact</th>
                             <th>Languages</th>
+                            <th>Experience</th>
                             <th>Rating</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -93,6 +94,7 @@
                             <td>{{ guide.specialization }}</td>
                             <td>{{ guide.contact_info }}</td>
                             <td>{{ guide.languages_spoken }}</td>
+                            <td>{{ guide.experience_years or 0 }} years</td>
                             <td>{{ guide.rating }}/5</td>
                             <td><span class="badge {% if guide.availability_status == 'Available' %}bg-success{% else %}bg-secondary{% endif %}">{{ guide.availability_status }}</span></td>
                             <td>
