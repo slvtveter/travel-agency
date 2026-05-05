@@ -5,3 +5,6 @@ __pycache__/
 .vscode/
 *.sqlite
 .env
+constraints.sql
+seed.sql
+travelagencyfullbackup.sql

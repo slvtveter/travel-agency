@@ -72,6 +72,23 @@ def execute_write(query, params=()):
         cursor.execute(query, params)
 
 
+def parse_positive_int(value, field_name):
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        abort(400, description=f"{field_name} must be a positive number.")
+    if parsed <= 0:
+        abort(400, description=f"{field_name} must be a positive number.")
+    return parsed
+
+
+def calculate_reservation_total(package_id, people):
+    tour = fetch_one('SELECT base_price FROM package_tours WHERE package_id = %s', (package_id,))
+    if tour is None:
+        abort(400, description="Selected package tour does not exist.")
+    return tour['base_price'] * people
+
+
 @app.errorhandler(ConnectionError)
 def handle_connection_error(err):
     app.logger.exception("Database connection failed: %s", err)
@@ -294,11 +311,13 @@ def add_reservation():
     package_id = request.form.get('package_id')
     guide_id = request.form.get('guide_id') or None
     vehicle_id = request.form.get('vehicle_id') or None
-    people = request.form.get('people')
+    people = parse_positive_int(request.form.get('people'), "People")
     request_text = request.form.get('special_request')
     channel = request.form.get('booking_channel')
     assign_date = request.form.get('assignment_date') or date.today()
-    execute_write('INSERT INTO reservations (customer_id, package_id, guide_id, vehicle_id, number_of_people, special_request, booking_channel, assignment_date, reservation_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', (customer_id, package_id, guide_id, vehicle_id, people, request_text, channel, assign_date, 'Confirmed'))
+    booking_date = date.today()
+    total_price = calculate_reservation_total(package_id, people)
+    execute_write('INSERT INTO reservations (booking_date, customer_id, package_id, guide_id, vehicle_id, number_of_people, total_price, special_request, booking_channel, assignment_date, reservation_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (booking_date, customer_id, package_id, guide_id, vehicle_id, people, total_price, request_text, channel, assign_date, 'Confirmed'))
     return redirect('/reservations')
 
 @app.route('/edit_reservation/<int:id>', methods=['GET', 'POST'])
@@ -308,12 +327,13 @@ def edit_reservation(id):
         package_id = request.form.get('package_id')
         guide_id = request.form.get('guide_id') or None
         vehicle_id = request.form.get('vehicle_id') or None
-        people = request.form.get('people')
+        people = parse_positive_int(request.form.get('people'), "People")
         request_text = request.form.get('special_request')
         channel = request.form.get('booking_channel')
         assign_date = request.form.get('assignment_date') or None
         status = request.form.get('status')
-        execute_write('UPDATE reservations SET customer_id=%s, package_id=%s, guide_id=%s, vehicle_id=%s, number_of_people=%s, special_request=%s, booking_channel=%s, assignment_date=%s, reservation_status=%s WHERE reservation_id=%s', (customer_id, package_id, guide_id, vehicle_id, people, request_text, channel, assign_date, status, id))
+        total_price = calculate_reservation_total(package_id, people)
+        execute_write('UPDATE reservations SET customer_id=%s, package_id=%s, guide_id=%s, vehicle_id=%s, number_of_people=%s, total_price=%s, special_request=%s, booking_channel=%s, assignment_date=%s, reservation_status=%s WHERE reservation_id=%s', (customer_id, package_id, guide_id, vehicle_id, people, total_price, request_text, channel, assign_date, status, id))
         return redirect('/reservations')
     with db_cursor(dictionary=True) as cursor:
         cursor.execute('SELECT * FROM reservations WHERE reservation_id = %s', (id,))
@@ -384,7 +404,7 @@ def add_payment():
     method = request.form.get('method')
     currency = request.form.get('currency') or 'USD'
     tx_id = request.form.get('transaction_id')
-    execute_write('INSERT INTO payments (reservation_id, amount, payment_method, currency, transaction_id, status) VALUES (%s, %s, %s, %s, %s, %s)', (res_id, amount, method, currency, tx_id, 'Completed'))
+    execute_write('INSERT INTO payments (reservation_id, amount, payment_method, currency, payment_date, transaction_id, status) VALUES (%s, %s, %s, %s, %s, %s, %s)', (res_id, amount, method, currency, date.today(), tx_id, 'Completed'))
     return redirect('/payments')
 
 @app.route('/edit_payment/<int:id>', methods=['GET', 'POST'])
