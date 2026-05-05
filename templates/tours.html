@@ -94,7 +94,7 @@
                                 <td>{{ tour.title }}</td>
                                 <td>{{ tour.destination }}</td>
                                 <td>{{ tour.tour_type }}</td>
-                                <td>${{ tour.base_price }}</td>
+                                <td>{{ "{:,.2f}".format(tour.base_price) }} {{ default_currency }}</td>
                                 <td class="small">{{ tour.start_date }} to {{ tour.end_date }}</td>
                                 <td>{{ tour.max_capacity }}</td>
                                 <td class="small">{{ tour.description }}</td>

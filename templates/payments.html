@@ -52,10 +52,11 @@
                     <div class="col-md-2">
                         <label class="form-label">Currency</label>
                         <select name="currency" class="form-select">
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="JPY">JPY (¥)</option>
+                            <option value="TRY">TRY</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -99,7 +100,7 @@
                                 <td>{{ pay.payment_date }}</td>
                                 <td>#{{ pay.reservation_id }}</td>
                                 <td><code>{{ pay.transaction_id }}</code></td>
-                                <td><strong>${{ pay.amount }}</strong></td>
+                                <td><strong>{{ "{:,.2f}".format(pay.amount) }} {{ pay.currency or default_currency }}</strong></td>
                                 <td>{{ pay.currency }}</td>
                                 <td>{{ pay.payment_method }}</td>
                                 <td><span class="badge bg-success">{{ pay.status }}</span></td>

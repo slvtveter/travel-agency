@@ -14,6 +14,7 @@ app = Flask(__name__)
 DB_CONNECT_RETRIES = int(os.getenv("DB_CONNECT_RETRIES", "3"))
 DB_CONNECT_TIMEOUT = int(os.getenv("DB_CONNECT_TIMEOUT", "5"))
 DB_RETRY_DELAY = float(os.getenv("DB_RETRY_DELAY", "0.5"))
+DEFAULT_CURRENCY = os.getenv("DEFAULT_CURRENCY", "TRY")
 
 def get_db_connection():
     last_error = None
@@ -87,6 +88,11 @@ def calculate_reservation_total(package_id, people):
     if tour is None:
         abort(400, description="Selected package tour does not exist.")
     return tour['base_price'] * people
+
+
+@app.context_processor
+def inject_currency():
+    return {'default_currency': DEFAULT_CURRENCY}
 
 
 @app.errorhandler(ConnectionError)
@@ -402,7 +408,7 @@ def add_payment():
     res_id = request.form.get('reservation_id')
     amount = request.form.get('amount')
     method = request.form.get('method')
-    currency = request.form.get('currency') or 'USD'
+    currency = request.form.get('currency') or DEFAULT_CURRENCY
     tx_id = request.form.get('transaction_id')
     execute_write('INSERT INTO payments (reservation_id, amount, payment_method, currency, payment_date, transaction_id, status) VALUES (%s, %s, %s, %s, %s, %s, %s)', (res_id, amount, method, currency, date.today(), tx_id, 'Completed'))
     return redirect('/payments')
